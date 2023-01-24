@@ -1,6 +1,6 @@
 # mongo
 
-### mongo
+### mongo 算子
 
 ```
 =: "key": "val" or "key__eq": "val"
