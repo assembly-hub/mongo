@@ -44,6 +44,12 @@ func main() {
 
 	tb1 := mongo.NewORMByDB(ctx, db, "table1", mongoRef)
 
+	exist, err := tb1.Exist()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(exist, err.Error())
+
 	/**
 	查询语法
 	= : "key": "val" or "key__eq": "val"
@@ -109,7 +115,7 @@ func main() {
 
 	var ret dao.Table1
 	// 参数：接收数据的容器，可以是 struct 或 map 或 []map 或 []struct，参数非slice时，查询会只关心第一条
-	err := tb1.ToData(&ret)
+	err = tb1.ToData(&ret)
 	if err != nil {
 		panic(err)
 	}

@@ -194,6 +194,34 @@ func (orm *ORM) ToJSON() string {
 	return q.JSON()
 }
 
+// Exist 检查数据是否存在
+func (orm *ORM) Exist() (bool, error) {
+	if !orm.keepQuery {
+		defer func() {
+			orm.ClearCache()
+		}()
+	}
+
+	table := orm.db.Collection(orm.tableName)
+	q := MixQ(orm.formatWhere(orm.tableName, orm.Q.Where))
+	opts := NewFindOneOptions()
+	opts.Select(Select{"_id"})
+	if len(orm.Q.Limit) == 1 {
+		opts.Skip(int64(orm.Q.Limit[0]))
+	}
+	var target map[string]string
+	err := table.FindOne(orm.ctx, q, &target, opts)
+	if err != nil {
+		return false, err
+	}
+
+	if target != nil && target["_id"] != "" {
+		return true, nil
+	}
+
+	return false, nil
+}
+
 func (orm *ORM) PageData(target interface{}, pageNo, pageSize uint) (*Paging, error) {
 	totalCount, err := orm.Count(false)
 	if err != nil {

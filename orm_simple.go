@@ -41,6 +41,12 @@ func SimpleOrm() {
 	dbObj := client.Database("test_db")
 
 	q := NewORMByDB(context.Background(), dbObj, "test1", ref)
+	exist, err := q.Exist()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(exist, err.Error())
+
 	q.Query("txt", "1", "ref", RefWhere{
 		"name": "test",
 		"ref": RefWhere{
