@@ -48,7 +48,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(exist, err.Error())
+	fmt.Println(exist, err)
 
 	/**
 	查询语法
@@ -113,8 +113,8 @@ func main() {
 		},
 	})
 
-	tb1.Select("txt", "-name")
-	tb1.Order("txt", "-name")
+	//tb1.Select("txt", "-name")
+	//tb1.Order("txt", "-name")
 
 	var ret dao.Table1
 	// 参数：接收数据的容器，可以是 struct 或 map 或 []map 或 []struct，参数非slice时，查询会只关心第一条
