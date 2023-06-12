@@ -1,11 +1,10 @@
-// package mongo
+// Package mongo
 package mongo
 
 import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -46,11 +45,10 @@ func (c *Collection) CreateOneIndex(ctx context.Context, indexName string, keys 
 	if ctx != nil {
 		ctxObj = ctx
 	}
-	index, err := indexView.CreateOne(ctxObj, indexModel)
+	_, err := indexView.CreateOne(ctxObj, indexModel)
 	if err != nil {
 		return err
 	}
-	log.Println("index: ", index)
 	return nil
 }
 
@@ -82,11 +80,10 @@ func (c *Collection) CreateManyIndex(ctx context.Context, indexList []ManyIndex)
 	if ctx != nil {
 		ctxObj = ctx
 	}
-	ret, err := indexView.CreateMany(ctxObj, indexModelList)
+	_, err := indexView.CreateMany(ctxObj, indexModelList)
 	if err != nil {
 		return err
 	}
-	log.Println("index list: ", ret)
 	return nil
 }
 
@@ -99,7 +96,6 @@ func (c *Collection) InsertDoc(ctx context.Context, doc map[string]interface{}) 
 	}
 	insertOneResult, err := c.collection.InsertOne(ctxObj, doc)
 	if err != nil {
-		log.Println(err)
 		return "", err
 	}
 	return insertOneResult.InsertedID.(primitive.ObjectID).Hex(), nil
@@ -115,7 +111,6 @@ func (c *Collection) InsertDocs(ctx context.Context, docs []interface{}, ordered
 	}
 	insertManyResult, err := c.collection.InsertMany(ctxObj, docs, insertManyOpts)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 	rets := make([]string, len(insertManyResult.InsertedIDs))
@@ -236,7 +231,6 @@ func (c *Collection) FindOneAndDelete(ctx context.Context,
 	}
 
 	if err := singleResult.Decode(delDoc); err != nil {
-		log.Println(err)
 		if err != mongo.ErrNoDocuments {
 			return err
 		}
@@ -275,7 +269,6 @@ func (c *Collection) FindOneAndReplace(ctx context.Context,
 	}
 
 	if err := singleResult.Decode(oldDoc); err != nil {
-		log.Print(err)
 		if err != mongo.ErrNoDocuments {
 			return err
 		}
@@ -324,7 +317,6 @@ func (c *Collection) FindOneAndUpdate(ctx context.Context,
 	}
 
 	if err := singleResult.Decode(oldDoc); err != nil {
-		log.Println(err)
 		if err != mongo.ErrNoDocuments {
 			return err
 		}
@@ -363,7 +355,6 @@ func (c *Collection) FindOneAndUpdateCustom(ctx context.Context,
 	}
 
 	if err := singleResult.Decode(oldDoc); err != nil {
-		log.Println(err)
 		if err != mongo.ErrNoDocuments {
 			return err
 		}
@@ -398,7 +389,6 @@ func (c *Collection) UpdateOne(ctx context.Context,
 	}
 	updateResult, err := c.collection.UpdateOne(ctxObj, filter.Cond(), updateOneSet, updateOneOpts)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 
@@ -437,7 +427,6 @@ func (c *Collection) UpdateMany(ctx context.Context,
 	}
 	updateResult, err := c.collection.UpdateMany(ctxObj, filter.Cond(), updateManeySet, updateManyOpts)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 
@@ -470,7 +459,6 @@ func (c *Collection) UpdateOneCustom(ctx context.Context,
 	}
 	updateResult, err := c.collection.UpdateOne(ctxObj, filter.Cond(), updateSet, updateOneOpts)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 
@@ -507,7 +495,6 @@ func (c *Collection) UpdateManyCustom(ctx context.Context,
 	}
 	updateResult, err := c.collection.UpdateMany(ctxObj, filter.Cond(), updateSet, updateManyOpts)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 
@@ -538,7 +525,6 @@ func (c *Collection) ReplaceOne(ctx context.Context,
 	}
 	updateResult, err := c.collection.ReplaceOne(ctxObj, filter.Cond(), replaceDoc, replaceOpts)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 
@@ -557,7 +543,6 @@ func (c *Collection) DeleteOne(ctx context.Context, filter *Query) (*DeleteResul
 	}
 	delResult, err := c.collection.DeleteOne(ctxObj, filter.Cond())
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 
@@ -573,7 +558,6 @@ func (c *Collection) DeleteMany(ctx context.Context, filter *Query) (*DeleteResu
 	}
 	delResult, err := c.collection.DeleteMany(ctxObj, filter.Cond())
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 
@@ -598,7 +582,6 @@ func (c *Collection) BulkWrite(ctx context.Context, bwm *BulkWriteModel) (*BulkW
 	}
 	bulkWriteResults, err := c.collection.BulkWrite(ctxObj, bwm.models, bulkWriteOpts)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 
@@ -669,12 +652,10 @@ func (c *Collection) Aggregate(ctx context.Context, results interface{}, serverM
 
 	aggCursor, err := c.collection.Aggregate(ctxObj, pipeline, opts)
 	if err != nil {
-		log.Println(err)
 		return err
 	}
 
 	if err = aggCursor.All(ctx, results); err != nil {
-		log.Println(err)
 		return err
 	}
 	return nil

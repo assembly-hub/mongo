@@ -1,9 +1,7 @@
-// package mongo
+// Package mongo
 package mongo
 
 import (
-	"log"
-
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -25,7 +23,6 @@ func String2ObjectID(v string) (hex ObjectID, err error) {
 func TryString2ObjectID(v string) ObjectID {
 	hex, err := primitive.ObjectIDFromHex(v)
 	if err != nil {
-		log.Println(err)
 		panic(err)
 	}
 

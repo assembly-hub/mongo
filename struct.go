@@ -1,4 +1,4 @@
-// package mongo
+// Package mongo
 package mongo
 
 type UpdateResult struct {

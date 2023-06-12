@@ -1,4 +1,4 @@
-// package mongo
+// Package mongo
 package mongo
 
 import (
@@ -109,7 +109,7 @@ func (orm *ORM) Query(pair ...interface{}) *ORM {
 	}
 
 	for i, n := 0, len(pair)/2; i < n; i++ {
-		orm.Q.Where[util.InterfaceToString(pair[i*2])] = pair[i*2+1]
+		orm.Q.Where[util.Any2String(pair[i*2])] = pair[i*2+1]
 	}
 	return orm
 }
@@ -609,7 +609,7 @@ func (orm *ORM) formatWhere(tbName string, raw Where) Where {
 	} else if len(needHandleKeyList) > 1 {
 		condExecutor := task.NewTaskExecutor(" mongotool query")
 		for _, k := range needHandleKeyList {
-			condExecutor.AddTask(func(param ...interface{}) (interface{}, error) {
+			condExecutor.AddFixed(func(param ...interface{}) (interface{}, error) {
 				cond := param[0].(Where)
 				key := param[1].(string)
 				if data, ok := cond[key].(*tempRefQ); ok {
@@ -625,7 +625,7 @@ func (orm *ORM) formatWhere(tbName string, raw Where) Where {
 				return nil, nil
 			}, raw, k)
 		}
-		_, err := condExecutor.ExecuteTask()
+		_, err := condExecutor.Execute(orm.ctx)
 		if err != nil {
 			panic(err)
 		}

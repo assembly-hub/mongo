@@ -1,10 +1,9 @@
-// package mongo
+// Package mongo
 package mongo
 
 import (
 	"context"
 	"fmt"
-	"log"
 	"reflect"
 	"runtime"
 	"time"
@@ -94,7 +93,6 @@ func Connection(ctx context.Context, appName string, mongoConf *Conf) *Client {
 	}
 
 	if !mongoConf.Connect {
-		log.Println("mongotool created")
 		return client
 	}
 
@@ -103,7 +101,6 @@ func Connection(ctx context.Context, appName string, mongoConf *Conf) *Client {
 		panic(err)
 	}
 
-	log.Println("mongotool connected")
 	return client
 }
 
@@ -115,7 +112,6 @@ func NewClient(ctx context.Context, opt *ClientOptions) (*Client, error) {
 	optList := []*options.ClientOptions{opt.ClientOptions, options.Client().SetRegistry(register())}
 	client, err := mongo.Connect(ctx, optList...)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 	c := new(Client)
@@ -164,7 +160,6 @@ func (c *Client) NewSession(fn func(sessionCtx SessionContext) error) error {
 	sessionOpts := options.Session().SetDefaultReadConcern(readconcern.Majority())
 	session, err := c.mongoClient.StartSession(sessionOpts)
 	if err != nil {
-		log.Println(err)
 		return err
 	}
 	defer session.EndSession(context.Background())
@@ -184,7 +179,6 @@ func (c *Client) NewSession(fn func(sessionCtx SessionContext) error) error {
 
 		err = fn(sessionCtx)
 		if err != nil {
-			log.Println(err)
 			err2 := session.AbortTransaction(context.Background())
 			if err2 != nil {
 				return fmt.Errorf("%w, %v", err2, err)
@@ -195,7 +189,6 @@ func (c *Client) NewSession(fn func(sessionCtx SessionContext) error) error {
 	})
 
 	if err != nil {
-		log.Println(err)
 		return err
 	}
 	return nil
