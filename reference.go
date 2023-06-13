@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-const foreignKeyErrStr = "foreign keys must use mongotool.Foreign[ForeignCollectionStruct] or mongotool.Foreign[ForeignList]"
+const foreignKeyErrStr = "foreign keys must use mongo.Foreign[ForeignCollectionStruct] or mongo.Foreign[ForeignList]"
 
 // refQ Mongo ref query
 type refQ struct {
@@ -244,9 +244,10 @@ func (r *Reference) AddTableDef(tbName string, def interface{}) {
 func (r *Reference) BuildRefs() {
 	for _, refMap := range r.tableRef {
 		for _, ref := range refMap {
+			errStr := fmt.Sprintf("table[%s] not be defined", ref.To)
 			ref.To = r.structToTable[ref.To]
 			if ref.To == "" {
-				panic(foreignKeyErrStr)
+				panic(errStr)
 			}
 		}
 	}

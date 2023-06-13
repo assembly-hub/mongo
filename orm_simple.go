@@ -6,25 +6,25 @@ import (
 	"fmt"
 )
 
-type Tb1 struct {
+type tb1 struct {
 	ID   ObjectID         `bson:"_id" json:"id"`
 	Txt  string           `bson:"txt" json:"txt"`
-	Ref  *Foreign[Tb2]    `bson:"ref" json:"ref" ref:"def"`
-	Ref2 ForeignList[Tb3] `bson:"ref2" json:"ref2" ref:"match"`
+	Ref  *Foreign[tb2]    `bson:"ref" json:"ref" ref:"def"`
+	Ref2 ForeignList[tb3] `bson:"ref2" json:"ref2" ref:"match"`
 }
 
-type Tb2 struct {
+type tb2 struct {
 	ID   string        `bson:"_id" json:"id"`
 	Name string        `bson:"name" json:"name"`
-	Ref  *Foreign[Tb3] `bson:"ref" json:"ref" ref:"def"`
+	Ref  *Foreign[tb3] `bson:"ref" json:"ref" ref:"def"`
 }
 
-type Tb3 struct {
+type tb3 struct {
 	ID  string `bson:"_id" json:"id"`
 	Txt string `bson:"txt" json:"txt"`
 }
 
-func SimpleOrm() {
+func simpleOrm() {
 	opts := OptionsFromURI("mongodb://localhost:27017")
 	client, err := NewClient(context.Background(), opts)
 	if err != nil {
@@ -33,9 +33,9 @@ func SimpleOrm() {
 	}
 
 	ref := NewReference()
-	ref.AddTableDef("test1", Tb1{})
-	ref.AddTableDef("test2", Tb2{})
-	ref.AddTableDef("test3", Tb3{})
+	ref.AddTableDef("test1", tb1{})
+	ref.AddTableDef("test2", tb2{})
+	ref.AddTableDef("test3", tb3{})
 	ref.BuildRefs()
 
 	dbObj := client.Database("test_db")
@@ -62,9 +62,9 @@ func SimpleOrm() {
 	//	"txt": "123",
 	//})
 
-	var ret Tb1
+	var ret tb1
 
-	// var ret Tb1
+	// var ret tb1
 	err = q.ToData(&ret)
 	if err != nil {
 		panic(err)
@@ -98,25 +98,25 @@ func SimpleOrm() {
 	fmt.Println("dt3: ", dt3)
 }
 
-func SimpleRef() {
+func simpleRef() {
 	ref := NewReference()
-	ref.AddTableDef("test1", Tb1{})
-	ref.AddTableDef("test2", Tb2{})
-	ref.AddTableDef("test3", Tb3{})
+	ref.AddTableDef("test1", tb1{})
+	ref.AddTableDef("test2", tb2{})
+	ref.AddTableDef("test3", tb3{})
 	ref.BuildRefs()
 
-	ret := Tb1{}
+	ret := tb1{}
 	ret.ID = NewObjectID()
 
 	data, err := ToRefData(ref, &ret)
 	fmt.Println(data, err)
 
-	p := []*Tb1{&ret}
-	r, err := ToRefListData[Tb1](ref, p)
+	p := []*tb1{&ret}
+	r, err := ToRefListData[tb1](ref, p)
 	fmt.Println(r, err)
 }
 
-func SimpleMongoOrmQueryInsertOne() {
+func simpleMongoOrmQueryInsertOne() {
 	opts := OptionsFromURI("mongodb://localhost:27017")
 	client, err := NewClient(context.Background(), opts)
 	if err != nil {
@@ -125,9 +125,9 @@ func SimpleMongoOrmQueryInsertOne() {
 	}
 
 	ref := NewReference()
-	ref.AddTableDef("test1", Tb1{})
-	ref.AddTableDef("test2", Tb2{})
-	ref.AddTableDef("test3", Tb3{})
+	ref.AddTableDef("test1", tb1{})
+	ref.AddTableDef("test2", tb2{})
+	ref.AddTableDef("test3", tb3{})
 	ref.BuildRefs()
 
 	dbObj := client.Database("test_db")
@@ -150,7 +150,7 @@ func SimpleMongoOrmQueryInsertOne() {
 	fmt.Println(one)
 }
 
-func SimpleProjection() {
+func simpleProjection() {
 	opts := OptionsFromURI("mongodb://localhost:27017")
 	client, err := NewClient(context.Background(), opts)
 	if err != nil {
@@ -164,7 +164,7 @@ func SimpleProjection() {
 	q.Query("arr_list.k1", "k").Select("arr_list.k2").Projection("arr_list.$", true)
 
 	// var s string
-	var s []Tb1
+	var s []tb1
 	err = q.ToData(&s)
 	if err != nil {
 		panic(err)
