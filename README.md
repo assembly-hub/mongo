@@ -20,25 +20,25 @@ var ref = mongo.NewReference()
 
 // 定义表结构
 type Table1 struct {
-// mongo 主键，bson 必须是 _id
-ID   mongo.ObjectID            `bson:"_id" json:"key"`
-Txt  string                    `bson:"txt" json:"txt"`
-Ref  *mongo.Foreign[Table2]    `bson:"ref" json:"ref" ref:"def"`
-Ref2 mongo.ForeignList[Table3] `bson:"ref2" json:"ref2" ref:"match"`
+    // mongo 主键，bson 必须是 _id
+    ID   mongo.ObjectID            `bson:"_id" json:"key"`
+    Txt  string                    `bson:"txt" json:"txt"`
+    Ref  *mongo.Foreign[Table2]    `bson:"ref" json:"ref" ref:"def"`
+    Ref2 mongo.ForeignList[Table3] `bson:"ref2" json:"ref2" ref:"match"`
 }
 // 添加表定义（建议放在表声明的go文件的 init 方法中）
 ref.AddTableDef("table1", dao.Table1{})
 
 type Table2 struct {
-ID   string                 `bson:"_id" json:"key"`
-Name string                 `bson:"name" json:"name"`
-Ref  *mongo.Foreign[Table3] `bson:"ref" json:"ref" ref:"def"`
+    ID   string                 `bson:"_id" json:"key"`
+    Name string                 `bson:"name" json:"name"`
+    Ref  *mongo.Foreign[Table3] `bson:"ref" json:"ref" ref:"def"`
 }
 ref.AddTableDef("table2", dao.Table2{})
 
 type Table3 struct {
-ID  string `bson:"_id" json:"key"`
-Txt string `bson:"txt" json:"txt"`
+    ID  string `bson:"_id" json:"key"`
+    Txt string `bson:"txt" json:"txt"`
 }
 ref.AddTableDef("table3", dao.Table3{})
 
@@ -56,8 +56,8 @@ opts := mongo.OptionsFromURI("mongodb://localhost:27017")
 // 创建client
 client, err := mongo.NewClient(context.Background(), opts)
 if err != nil {
-fmt.Println("get mongo client error")
-panic(err)
+    fmt.Println("get mongo client error")
+    panic(err)
 }
 // 链接数据库
 db := client.Database("example")
@@ -161,10 +161,12 @@ num % 10 == 1
 
 ### 13、match 文档子元素判断
 
-> tb1.Where("arr__match", MixQ(map[string]interface{}{
-"key": 1,
-"name__in": []string{"test", "test2"},
-> }))
+```go
+tb1.Where("arr__match", MixQ(map[string]interface{}{
+    "key": 1,
+    "name__in": []string{"test", "test2"},
+}))
+```
 
 说明
 
@@ -218,8 +220,8 @@ elem.id = 1 and elem.name in ["test", "test2"]
 
 ```go
 tb1.Where("$or", map[string]interface{}{
-"key__gt": 0,
-"name__startswith": "str",
+    "key__gt": 0,
+    "name__startswith": "str",
 })
 ```
 
@@ -232,13 +234,13 @@ key大于0
 
 ```go
 tb1.Where("$or", []map[string]interface{}{
-{
-"key__gt": 0,
-"name__startswith": "str",
-},{
-"key__lt": 0,
-"name": "string",
-}
+    {
+        "key__gt": 0,
+        "name__startswith": "str",
+    },{
+        "key__lt": 0,
+        "name": "string",
+    }
 })
 ```
 
@@ -398,10 +400,10 @@ tb1.ToDate(&res)
 
 ```go
 type Paging struct {
-PageNo    int `json:"page_no"`   //当前页
-PageSize  int `json:"page_size"` //每页条数
-Total     int `json:"total"`      //总条数
-PageTotal int `json:"page_total"` //总页数
+    PageNo    int `json:"page_no"`   //当前页
+    PageSize  int `json:"page_size"` //每页条数
+    Total     int `json:"total"`      //总条数
+    PageTotal int `json:"page_total"` //总页数
 }
 ```
 
@@ -437,20 +439,20 @@ PageTotal int `json:"page_total"` //总页数
 // 事务，要求mongo版本>4.0，需要mongo副本集群
 // 返回nil事务执行成功
 err = mongo.TransSession(client, func (sessionCtx mongo.SessionContext) error {
-sessTb1 := mongo.NewORMByClient(sessionCtx, client, "example", "table1", mongoRef)
-// 操作
-//sessTb1.InsertOne()
-//sessTb1.DeleteOne()
-_, err = sessTb1.UpdateOne(map[string]interface{}{
-"name": "test",
-}, true)
-if err != nil {
-return err
-}
-return nil
+    sessTb1 := mongo.NewORMByClient(sessionCtx, client, "example", "table1", mongoRef)
+    // 操作
+    //sessTb1.InsertOne()
+    //sessTb1.DeleteOne()
+    _, err = sessTb1.UpdateOne(map[string]interface{}{
+        "name": "test",
+    }, true)
+    if err != nil {
+        return err
+    }
+    return nil
 })
 if err != nil {
-panic(err)
+    panic(err)
 }
 ```
 
